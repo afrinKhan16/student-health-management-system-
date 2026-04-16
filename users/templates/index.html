@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Health Care Management System</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+body { height: 100vh; }
+.container { display: flex; height: 100vh; }
+.left { width: 50%; background: #0f0f14; color: white; padding: 80px; }
+.left h2 { font-size: 30px; }
+.left p { color: gray; margin-bottom: 30px; }
+.left input { width: 80%; padding: 10px; margin: 10px 0; background: transparent; border: none; border-bottom: 1px solid gray; color: white; outline: none; }
+.left a { color: gray; font-size: 12px; display: block; margin: 10px 0; text-decoration: none; }
+.left button { width: 80%; padding: 12px; background: #8e5cff; border: none; color: white; border-radius: 6px; margin-top: 20px; cursor: pointer; font-size: 15px; }
+.left button:hover { opacity: 0.9; }
+.bottom { margin-top: 50px; }
+.signup { background: #1c1c24; padding: 6px 12px; margin-left: 10px; border: none; color: white; border-radius: 4px; cursor: pointer; }
+.right { width: 50%; background: linear-gradient(135deg, #8e5cff, #a66cff); color: white; padding: 80px; position: relative; }
+.right h1 { font-size: 32px; }
+.right h2 { font-size: 42px; font-weight: bold; }
+.right p { margin-top: 10px; }
+.emoji { font-size: 90px; margin-top: 100px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left">
+        <h2>Login</h2>
+        <p>Enter your account details</p>
+        
+        {% if error %}
+            <p style="color: red; margin-bottom: 10px;">{{ error }}</p>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: green; margin-bottom: 10px;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <a href="#">Forgot Password?</a>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="bottom">
+            <span>Don't have an account?</span>
+            <a href="{% url 'register_patient' %}"><button class="signup">Sign up</button></a>
+        </div>
+    </div>
+    <div class="right">
+        <h1>Welcome to</h1>
+        <h2>student health care management system</h2>
+        <p>Login to access your account</p>
+        <div class="emoji">📚👨‍🎓</div>
+    </div>
+</div>
+
+</body>
+</html>

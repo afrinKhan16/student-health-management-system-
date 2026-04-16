@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Appointments</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 20px; }
+        h1 { text-align: center; color: #4a5a6a; }
+        .appointment { background: white; border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .row input { flex: 1; padding: 8px; border: 1px solid #ccc; }
+        label { font-size: 14px; color: #555; }
+        .checkbox-group { display: flex; gap: 20px; margin: 10px 0; }
+        textarea { width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; }
+        .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #0d4d5c; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <a href="{% url 'dashboard' %}" class="back-btn">&larr; Back to Dashboard</a>
+
+    <h1>Medical Appointments</h1>
+
+    {% for appt in schedules %}
+    <div class="appointment">
+        <div class="row">
+            <input type="text" value="Patient: {{ appt.patient.user.first_name }} {{ appt.patient.user.last_name }}" readonly>
+            <input type="text" value="{{ appt.date }} {{ appt.time }}" readonly>
+        </div>
+        <div class="row">
+            <input type="text" placeholder="Location" value="Main Clinic" readonly>
+            <input type="text" placeholder="Contact" value="{{ appt.patient.phone|default:'N/A' }}" readonly>
+        </div>
+        <div class="row">
+            <input type="text" placeholder="Reason" value="Medical Consultation" readonly>
+        </div>
+        <div class="row">
+            <input type="text" placeholder="Result" value="{{ appt.status|title }}" readonly>
+        </div>
+        <div class="checkbox-group">
+            <label><input type="checkbox" {% if appt.status == 'completed' %}checked{% endif %} disabled> Completed</label>
+            <label><input type="checkbox" {% if appt.status == 'cancelled' %}checked{% endif %} disabled> Canceled</label>
+        </div>
+        <textarea placeholder="Notes" readonly></textarea>
+    </div>
+    {% empty %}
+    <p style="text-align:center; color:#555;">No appointments found.</p>
+    {% endfor %}
+
+</body>
+</html>
