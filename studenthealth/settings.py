@@ -23,9 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-vf^=*2^l6v8!n6i9v$oftt4p-vx*3$25#^19d*fi_h1pge_qs5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# ডেপ্লয় করার সময় DEBUG False করে দিতে হয়।
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS এ '*' দেওয়া মানে যেকোনো ডোমেইন থেকে এই প্রজেক্ট রান করবে।
+# পরবর্তীতে আপনি চাইলে এখানে আপনার আসল ডোমেইন নাম (যেমন: test.pythonanywhere.com) দিতে পারেন।
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -116,6 +119,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# ডেপ্লয়ের সময় স্ট্যাটিক ফাইলগুলো (CSS, JS) একসাথে করার জন্য STATIC_ROOT ব্যবহার করা হয়।
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 AUTH_USER_MODEL = 'users.User'
 
