@@ -12,22 +12,16 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-vf^=*2^l6v8!n6i9v$oftt4p-vx*3$25#^19d*fi_h1pge_qs5'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# ডেপ্লয় করার সময় DEBUG False করে দিতে হয়।
+
 DEBUG = False
 
-# ALLOWED_HOSTS এ '*' দেওয়া মানে যেকোনো ডোমেইন থেকে এই প্রজেক্ট রান করবে।
-# পরবর্তীতে আপনি চাইলে এখানে আপনার আসল ডোমেইন নাম (যেমন: test.pythonanywhere.com) দিতে পারেন।
+
 ALLOWED_HOSTS = ['*']
 
 
@@ -120,7 +114,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# ডেপ্লয়ের সময় স্ট্যাটিক ফাইলগুলো (CSS, JS) একসাথে করার জন্য STATIC_ROOT ব্যবহার করা হয়।
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 AUTH_USER_MODEL = 'users.User'

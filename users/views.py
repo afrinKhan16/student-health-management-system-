@@ -39,7 +39,7 @@ def dashboard(request):
     busy_doctors = Appointment.objects.filter(status='pending').values_list('doctor_id', flat=True)
     available_doctors = Doctor.objects.exclude(id__in=busy_doctors).count()
     
-    emergency_cases = Notification.objects.filter(message__icontains='Emergency').count()
+    emergency_cases = Appointment.objects.filter(is_emergency=True, status='pending').count()
 
     context = {
         'notifications': notifications,
@@ -93,6 +93,37 @@ def register_patient(request):
         
     return render(request, 'Student profile.html')
 
+def student_signup(request):
+    if request.user.is_authenticated:
+        if request.user.role == 'teacher':
+            return redirect('teacher_dashboard')
+        return redirect('dashboard')
+        
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '')
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+
+        if User.objects.filter(username=username).exists():
+            return render(request, 'signup.html', {'error': 'Username already exists. Please choose a different one.'})
+
+        if first_name and username and password:
+            new_user = User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=first_name,
+                role='patient'
+            )
+            Patient.objects.create(
+                user=new_user
+            )
+            messages.success(request, f"Account created successfully for {first_name}! You can now login.")
+            return redirect('login')
+        else:
+            return render(request, 'signup.html', {'error': 'Please provide all details.'})
+        
+    return render(request, 'signup.html')
+
 @login_required(login_url='login')
 def book_appointment(request, doctor_id=None):
     if request.method == 'POST':
@@ -115,16 +146,29 @@ def book_appointment(request, doctor_id=None):
         else:
             patient = getattr(request.user, 'patient_profile', Patient.objects.first())
             
+        is_emergency = request.POST.get('is_emergency') == 'yes'
+        appt_date_str = request.POST.get('date')
+        if appt_date_str:
+            from datetime import datetime
+            try:
+                appt_date = datetime.strptime(appt_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                appt_date = timezone.now().date()
+        else:
+            appt_date = timezone.now().date()
+            
         if doctor and patient:
             Appointment.objects.create(
                 patient=patient,
                 doctor=doctor,
-                date=timezone.now().date(),
+                date=appt_date,
                 time=timezone.now().time(),
-                status='pending'
+                status='pending',
+                is_emergency=is_emergency
             )
             
-        messages.success(request, "Appointment booked successfully! Status: Pending")
+        msg = "Emergency Appointment booked successfully!" if is_emergency else "Appointment booked successfully! Status: Pending"
+        messages.success(request, msg)
         
         # Notify all teachers about the appointment
         patient_display_name = patient_name_input or request.user.first_name or request.user.username
@@ -132,9 +176,14 @@ def book_appointment(request, doctor_id=None):
         
         teachers = User.objects.filter(role='teacher')
         for teacher in teachers:
+            if is_emergency:
+                message = f"EMERGENCY: Student '{patient_display_name}' has requested an emergency appointment with {doctor_display_name}."
+            else:
+                message = f"Student '{patient_display_name}' has booked an appointment with {doctor_display_name}. Status: Pending."
+            
             Notification.objects.create(
                 user=teacher,
-                message=f"Student '{patient_display_name}' has booked an appointment with {doctor_display_name}. Status: Pending."
+                message=message
             )
                 
         return redirect('requested_appointments')
@@ -151,7 +200,7 @@ def my_schedule(request):
             schedules = Appointment.objects.filter(doctor=doctor_profile).order_by('-date', '-time')
         except Doctor.DoesNotExist:
             schedules = []
-    elif request.user.role in ['admin', 'receptionist']:
+    elif request.user.role == 'admin':
         schedules = Appointment.objects.all().order_by('-date', '-time')
     else:
         schedules = []
@@ -186,7 +235,7 @@ def accept_appointment(request, appt_id):
 def requested_appointments(request):
     if request.user.role == 'doctor':
         appointments = Appointment.objects.filter(doctor=request.user.doctor_profile, status='pending').order_by('-date', '-time')
-    elif request.user.role in ['admin', 'receptionist']:
+    elif request.user.role == 'admin':
         appointments = Appointment.objects.filter(status='pending').order_by('-date', '-time')
     else:
         try:

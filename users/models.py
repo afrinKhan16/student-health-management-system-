@@ -6,7 +6,6 @@ class User(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Admin'),
         ('doctor', 'Doctor'),
-        ('receptionist', 'Receptionist'),
         ('patient', 'Patient'),
         ('accountant', 'Accountant'),
         ('teacher', 'Teacher'),
@@ -63,6 +62,7 @@ class Appointment(models.Model):
     date = models.DateField()
     time = models.TimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    is_emergency = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -294,7 +294,9 @@ tr:hover td { background: #f8f9fa; }
             </tr>
             {% for appt in pending_appointments %}
             <tr>
-                <td>{% if appt.patient.user.first_name %}{{ appt.patient.user.first_name }} {{ appt.patient.user.last_name }}{% else %}{{ appt.patient.user.username }}{% endif %}</td>
+                <td>{% if appt.patient.user.first_name %}{{ appt.patient.user.first_name }} {{ appt.patient.user.last_name }}{% else %}{{ appt.patient.user.username }}{% endif %}
+                    {% if appt.is_emergency %} <span style="font-size:10px; background:#fadbd8; color:#e74c3c; padding:2px 6px; border-radius:4px; font-weight:bold; margin-left:5px;">🚨 EMERGENCY</span> {% endif %}
+                </td>
                 <td>Dr. {{ appt.doctor.user.first_name }} {{ appt.doctor.user.last_name }}</td>
                 <td>{{ appt.date }}</td>
                 <td>{{ appt.time|time:"h:i A" }}</td>

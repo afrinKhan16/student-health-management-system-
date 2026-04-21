@@ -50,7 +50,7 @@
                 <td class="label">Patient's Name</td>
                 <td><input type="text" name="patient_name" style="width:100%; border:none; outline:none;"></td>
                 <td class="label">Date</td>
-                <td><input type="date" name="date" style="width:100%; border:none; outline:none;"></td>
+                <td><input type="date" name="date" id="appointment_date" style="width:100%; border:none; outline:none;" required></td>
             </tr>
             <tr>
                 <td class="label">Student ID</td>
@@ -142,6 +142,9 @@
         </table>
         
         <div style="margin-top: 15px; text-align: center;">
+            <label style="display:inline-block; margin-right: 20px; font-weight: bold; color: red;">
+                <input type="checkbox" name="is_emergency" value="yes"> 🚨 Emergency Case
+            </label>
             <button type="submit" style="background:#0d4d5c; color:white; padding:10px 30px; border:none; cursor:pointer; font-size:16px;">Save Prescription / Booking</button>
         </div>
     </form>
@@ -152,6 +155,17 @@
     </div>
 
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateInput = document.getElementById('appointment_date');
+        if (dateInput) {
+            // Set the minimum allowed date to today
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        }
+    });
+</script>
 
 </body>
 </html>

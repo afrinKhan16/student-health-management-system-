@@ -1,104 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Requested Appointments</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', Arial, sans-serif; background: #f0f2f5; }
-.navbar { background: linear-gradient(135deg, #0d4d5c, #1a7a8a); color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 12px rgba(0,0,0,0.15); position: fixed; top: 0; left: 220px; right: 0; z-index: 50; }
-.navbar h2 { margin: 0; font-size: 18px; font-weight: 600; }
-.sidebar { width: 220px; height: 100vh; background: linear-gradient(180deg, #0d3d4a, #123f4a); color: white; position: fixed; top: 0; left: 0; padding-top: 20px; z-index: 100; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
-.sidebar .logo { text-align: center; padding: 15px 0 25px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
-.sidebar .logo h3 { font-size: 16px; font-weight: 600; }
-.sidebar .logo small { font-size: 11px; opacity: 0.6; }
-.sidebar a { display: flex; align-items: center; gap: 10px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; font-weight: 400; transition: all 0.2s; border-left: 3px solid transparent; }
-.sidebar a:hover { background: rgba(255,255,255,0.08); color: white; border-left-color: #00a8cc; }
-.sidebar a.active { background: rgba(255,255,255,0.1); color: white; border-left-color: #00a8cc; }
-.sidebar .divider { height: 1px; background: rgba(255,255,255,0.08); margin: 10px 15px; }
-.main { margin-left: 220px; padding: 80px 25px 25px; }
-.page-title { font-size: 22px; font-weight: 700; color: #2c3e50; margin-bottom: 20px; }
-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-th { background: linear-gradient(135deg, #0d4d5c, #1a7a8a); color: white; padding: 14px 16px; text-align: left; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-td { padding: 13px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: #f8f9fa; }
-.badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-.badge-pending { background: #ffeaa7; color: #d68910; }
-.accept-btn { padding: 6px 14px; background: linear-gradient(135deg, #1e8449, #2ecc71); color: white; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.2s; display: inline-block; }
-.accept-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(46,204,113,0.3); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requested Appointments</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .logo-font {
+            font-family: 'Pacifico', cursive;
+        }
+        /* Gradient Background */
+        .bg-ombre {
+            background: linear-gradient(-45deg, #0f172a, #1e3a8a, #0369a1, #0891b2);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        /* Table hover */
+        .table-row-hover:hover {
+            background-color: #f8fafc;
+            transform: scale(1.002);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.2s ease-in-out;
+            z-index: 10;
+            position: relative;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #0ea5e9, #6366f1);
+        }
+        /* Accept Button */
+        .btn-accept {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.39);
+            transition: all 0.3s ease;
+        }
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
-<body>
+<body class="antialiased flex text-gray-800 min-h-screen">
 
-<div class="navbar">
-    <h2>Student Health Control Panel</h2>
-    <div>Welcome, {{ user.first_name|default:user.username }}</div>
-</div>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-ombre text-white flex flex-col fixed h-full z-20 shadow-2xl">
+        <div class="p-6 text-center border-b border-white/10 relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+            <i class="fas fa-hospital-user text-4xl mb-3 drop-shadow-lg"></i>
+            <h3 class="text-xl font-bold logo-font">Student Health</h3>
+            <p class="text-xs text-white/70 uppercase tracking-widest mt-1">{% if user.role == 'admin' %}Student{% else %}{{ user.role|title }}{% endif %} Panel</p>
+        </div>
+        
+        <nav class="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
+            <a href="{% url 'dashboard' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+                <i class="fas fa-chart-pie w-6 group-hover:scale-110 transition-transform text-cyan-300"></i><span class="ml-2">Dashboard</span>
+            </a>
+            <a href="{% url 'doctors_list' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+                <i class="fas fa-user-md w-6 group-hover:scale-110 transition-transform text-cyan-300"></i><span class="ml-2">Doctors Info</span>
+            </a>
+            <a href="{% url 'my_schedule' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+                <i class="fas fa-calendar-alt w-6 group-hover:scale-110 transition-transform text-blue-300"></i><span class="ml-2">Doctors Schedule</span>
+            </a>
+            <a href="{% url 'available_doctors' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+                <i class="fas fa-check-circle w-6 group-hover:scale-110 transition-transform text-emerald-300"></i><span class="ml-2">Available Doctors</span>
+            </a>
+            
+            <div class="my-4 border-t border-white/10"></div>
+            
+            <a href="{% url 'requested_appointments' %}" class="flex items-center px-4 py-3 bg-white/10 text-white rounded-xl font-medium transition-all group relative overflow-hidden shadow-inner">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
+                <i class="fas fa-clipboard-list w-6 relative z-10 text-white"></i><span class="relative z-10 ml-2">Requested Appointments</span>
+            </a>
+            <a href="{% url 'book_appointment' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+                <i class="fas fa-pills w-6 group-hover:scale-110 transition-transform text-pink-300"></i><span class="ml-2">Doctors Prescription</span>
+            </a>
+        </nav>
+        
+        <div class="p-4 border-t border-white/10">
+            <a href="{% url 'logout' %}" class="flex items-center justify-center px-4 py-3 bg-red-500/20 text-red-100 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/30 rounded-xl font-medium transition-all">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </a>
+        </div>
+    </aside>
 
-<div class="sidebar">
-    <div class="logo">
-        <h3>🏥 {{ user.first_name|default:"Student" }}</h3>
-        <small>{% if user.role == 'admin' %}Student{% else %}{{ user.role|title }}{% endif %} Panel</small>
-    </div>
-    <a href="{% url 'dashboard' %}">📊 Dashboard</a>
-    <a href="{% url 'doctors_list' %}">👨‍⚕️ Doctors Info</a>
-    <a href="{% url 'my_schedule' %}">📅 Doctors Schedule</a>
-    <a href="{% url 'available_doctors' %}">✅ Available Doctors</a>
-    <div class="divider"></div>
-    <a href="{% url 'requested_appointments' %}" class="active">📋 Requested Appointments</a>
-    <a href="{% url 'book_appointment' %}">💊 Doctors Prescription</a>
-    <div class="divider"></div>
-    <a href="{% url 'logout' %}" style="color: #ff6b6b; font-weight: 500;">🚪 Logout</a>
-</div>
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 bg-[#f8fafc] min-h-screen relative">
+        <!-- Top Navbar -->
+        <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-10 border-b border-gray-100 px-8 py-4 flex justify-between items-center transition-all">
+            <h2 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Control Panel ✨</h2>
+            <div class="flex items-center space-x-4">
+                <div class="flex flex-col text-right">
+                    <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Welcome Back</span>
+                    <span class="text-sm font-bold text-gray-700">{{ user.first_name|default:user.username }} 👋</span>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md transform hover:scale-105 transition-transform cursor-pointer">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+            </div>
+        </header>
 
-<div class="main">
-    <h3 class="page-title">📋 Requested Appointments</h3>
-    
-    {% if messages %}
-        {% for message in messages %}
-            <div style="padding: 12px 16px; background: #d5f5e3; color: #27ae60; margin-bottom: 15px; border-radius: 8px; font-size: 14px; border-left: 4px solid #27ae60;">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-    
-    <table>
-        <tr>
-            <th>Patient</th>
-            {% if user.role != 'doctor' %}
-            <th>Doctor</th>
+        <div class="p-8 max-w-7xl mx-auto space-y-8">
+            <div class="fade-in-up flex items-center justify-between">
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-800 tracking-tight">📋 Requested Appointments</h3>
+                    <p class="text-gray-500 mt-1">Review and manage upcoming patient requests.</p>
+                </div>
+            </div>
+
+            {% if messages %}
+                <div class="fade-in-up delay-1">
+                {% for message in messages %}
+                    <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl shadow-sm flex items-center text-emerald-800 mb-3">
+                        <i class="fas fa-check-circle text-xl mr-3 text-emerald-500"></i>
+                        <p class="font-medium">{{ message }}</p>
+                    </div>
+                {% endfor %}
+                </div>
             {% endif %}
-            <th>Date & Time</th>
-            <th>Status</th>
-            {% if user.role == 'doctor' or user.role == 'admin' %}
-            <th>Action</th>
-            {% endif %}
-        </tr>
-        {% for appt in appointments %}
-        <tr>
-            <td>{% if appt.patient.user.first_name %}{{ appt.patient.user.first_name }}{% else %}{{ appt.patient.user.username }}{% endif %}</td>
-            {% if user.role != 'doctor' %}
-            <td>Dr. {{ appt.doctor.user.first_name }}</td>
-            {% endif %}
-            <td>{{ appt.date }} {{ appt.time }}</td>
-            <td><span class="badge badge-pending">{{ appt.status|title }}</span></td>
-            {% if user.role == 'doctor' or user.role == 'admin' %}
-            <td>
-                {% if appt.status == 'pending' and user.role == 'doctor' %}
-                <a href="{% url 'accept_appointment' appt.id %}" class="accept-btn">✅ Accept Request</a>
-                {% else %}
-                - 
-                {% endif %}
-            </td>
-            {% endif %}
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="5" style="text-align: center; color: #95a5a6; padding: 30px;">No requested appointments pending.</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+            
+            <!-- Table Card -->
+            <div class="fade-in-up delay-2">
+                <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-gray-200/60">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-slate-100 to-gray-50 border-b border-gray-200">
+                                <th class="py-4 px-6 font-bold text-gray-600 uppercase text-xs tracking-wider">Patient</th>
+                                {% if user.role != 'doctor' %}
+                                <th class="py-4 px-6 font-bold text-gray-600 uppercase text-xs tracking-wider">Doctor</th>
+                                {% endif %}
+                                <th class="py-4 px-6 font-bold text-gray-600 uppercase text-xs tracking-wider">Date & Time</th>
+                                <th class="py-4 px-6 font-bold text-gray-600 uppercase text-xs tracking-wider">Status</th>
+                                {% if user.role == 'doctor' or user.role == 'admin' %}
+                                <th class="py-4 px-6 font-bold text-gray-600 uppercase text-xs tracking-wider text-right">Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 bg-white/70">
+                            {% for appt in appointments %}
+                            <tr class="table-row-hover">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center">
+                                        <div class="w-9 h-9 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold mr-3 shadow-sm">
+                                            👤
+                                        </div>
+                                        <div class="font-bold text-gray-800 flex flex-col">
+                                            <span>{% if appt.patient.user.first_name %}{{ appt.patient.user.first_name }}{% else %}{{ appt.patient.user.username }}{% endif %}</span>
+                                            {% if appt.is_emergency %}
+                                            <span class="text-[10px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded mt-1 uppercase w-max">🚨 Emergency</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                {% if user.role != 'doctor' %}
+                                <td class="py-4 px-6 text-gray-700 font-medium">
+                                    👨‍⚕️ Dr. {{ appt.doctor.user.first_name }}
+                                </td>
+                                {% endif %}
+                                <td class="py-4 px-6">
+                                    <div class="text-sm font-semibold text-gray-800"><i class="far fa-calendar text-gray-400 mr-1"></i> {{ appt.date }}</div>
+                                    <div class="text-xs text-gray-500 mt-1"><i class="far fa-clock text-gray-400 mr-1"></i> {{ appt.time }}</div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 ring-1 ring-amber-200">
+                                        ⏳ {{ appt.status|title }}
+                                    </span>
+                                </td>
+                                {% if user.role == 'doctor' or user.role == 'admin' %}
+                                <td class="py-4 px-6 text-right">
+                                    {% if appt.status == 'pending' and user.role == 'doctor' %}
+                                    <a href="{% url 'accept_appointment' appt.id %}" class="btn-accept text-white px-4 py-2 rounded-xl text-sm font-bold inline-flex items-center shadow-md">
+                                        ✨ Accept
+                                    </a>
+                                    {% else %}
+                                    <span class="text-gray-400 font-medium text-sm">-</span>
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-16 px-6 text-center">
+                                    <div class="text-6xl mb-4 opacity-50">😴</div>
+                                    <p class="text-lg font-bold text-gray-500">No requested appointments pending.</p>
+                                    <p class="text-sm text-gray-400 mt-2">You are all caught up!</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="fade-in-up delay-2 pt-12 pb-6 text-center border-t border-gray-200 mt-12">
+                <p class="text-sm text-gray-400 font-medium">
+                    &copy; 2026 Student Health Management System. All rights reserved. 💖
+                </p>
+            </div>
+        </div>
+    </main>
 
 </body>
 </html>
